@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dipti's Restaurant | Artisanal Fine Dining & Gourmet Menu</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a href="index.html" class="brand-logo">
+                <div class="logo-icon"><i class="fas fa-utensils"></i></div>
+                <h1>Dipti's</h1>
+            </a>
+            
+            <div class="nav-actions">
+                <a href="admin.html" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.85rem;">
+                    <i class="fas fa-user-shield"></i> Admin Panel
+                </a>
+                <button class="cart-btn-floating" id="cartBtn">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Cart</span>
+                    <div class="cart-badge" id="cartBadge">0</div>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="hero">
+        <div class="container hero-grid">
+            <div class="hero-text">
+                <div class="hero-subtitle">
+                    <i class="fas fa-star"></i> Gourmet Culinary Experience
+                </div>
+                <h1 class="hero-title">Taste the Elegance at <span>Dipti's Restaurant</span></h1>
+                <p class="hero-desc">
+                    Immerse your senses in handcrafted dishes created with organic local ingredients, rich signature spices, and uncompromising culinary art.
+                </p>
+                <div style="display: flex; gap: 16px; align-items: center;">
+                    <a href="#menu-section" class="btn btn-primary">
+                        <i class="fas fa-book-open"></i> Explore Menu
+                    </a>
+                    <a href="admin.html" class="btn btn-secondary">
+                        <i class="fas fa-cog"></i> Manage Kitchen
+                    </a>
+                </div>
+                <div class="hero-badges">
+                    <div class="hero-stat">
+                        <div class="stat-icon"><i class="fas fa-fire"></i></div>
+                        <div><strong>Freshly Cooked</strong><br><small style="color:var(--text-dim)">Made to Order</small></div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="stat-icon"><i class="fas fa-truck-fast"></i></div>
+                        <div><strong>Express Delivery</strong><br><small style="color:var(--text-dim)">30 Mins Hot</small></div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1000&q=80" alt="Dipti's Gourmet Special Platter">
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN MENU SECTION -->
+    <main class="container" id="menu-section" style="padding-top: 40px;">
+        <h2 class="section-title">Our Chef's Menu</h2>
+        <p class="section-subtitle">Select from our artisanal appetizers, hearty main courses, heavenly desserts, & craft beverages</p>
+
+        <!-- Category & Search Controls -->
+        <div class="menu-controls">
+            <div class="category-tabs" id="categoryTabs">
+                <!-- Dynamically populated by app.js -->
+            </div>
+            <div class="search-filter-box">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="Search dishes, ingredients...">
+                </div>
+            </div>
+        </div>
+
+        <!-- Food Cards Grid -->
+        <div class="menu-grid" id="menuGrid">
+            <!-- Dynamically populated by app.js -->
+        </div>
+    </main>
+
+    <!-- CART DRAWER OVERLAY -->
+    <div class="cart-drawer-overlay" id="cartDrawerOverlay"></div>
+
+    <!-- CART DRAWER -->
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-header">
+            <h2>Your Order Basket</h2>
+            <button class="close-btn" id="closeCartBtn">&times;</button>
+        </div>
+        <div class="cart-body" id="cartItemsContainer">
+            <!-- Cart items populated by app.js -->
+        </div>
+        <div class="cart-footer">
+            <div class="total-row">
+                <span>Total Amount:</span>
+                <span id="cartTotal" style="color: var(--accent-gold);">$0.00</span>
+            </div>
+            <button class="btn btn-primary" id="checkoutBtn" style="width: 100%;" disabled>
+                Proceed to Checkout <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- CHECKOUT MODAL -->
+    <div class="modal-overlay" id="checkoutModal">
+        <div class="modal-container">
+            <h3 class="modal-title"><i class="fas fa-utensils" style="color: var(--accent-orange)"></i> Complete Your Order</h3>
+            <form id="checkoutForm">
+                <div class="form-group">
+                    <label for="custName">Full Name *</label>
+                    <input type="text" id="custName" class="form-control" required placeholder="e.g. Dipti Sharma">
+                </div>
+                <div class="form-group">
+                    <label for="custPhone">Phone Number *</label>
+                    <input type="tel" id="custPhone" class="form-control" required placeholder="e.g. +1 (555) 019-2834">
+                </div>
+                <div class="form-group">
+                    <label for="custAddress">Delivery Address & Instructions *</label>
+                    <textarea id="custAddress" class="form-control" rows="3" required placeholder="Street address, Apartment, Suite number"></textarea>
+                </div>
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button type="button" class="btn btn-secondary" id="closeCheckoutBtn" style="flex: 1;">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 2;">Confirm Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <p style="font-family: var(--font-heading); font-size: 1.2rem; color: var(--text-light); margin-bottom: 8px;">Dipti's Restaurant</p>
+            <p style="margin-bottom: 16px;">Open daily: 11:00 AM - 11:00 PM | Fine Dining & Takeaway</p>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">&copy; 2026 Dipti's Restaurant. Powered by HTML, CSS, JavaScript & Supabase.</p>
+        </div>
+    </footer>
+
+    <!-- Supabase JS Client Library CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
