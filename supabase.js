@@ -1,128 +1,165 @@
 /**
- * Supabase & Local DB Service Provider for Dipti's Restaurant
+ * Supabase & Local DB Service Provider for Desihut Restaurant (دیسی ہٹ)
  * Provides CRUD operations for Menu Items and Orders.
- * Seamlessly uses Supabase if configured, or falls back to localStorage.
+ * Connects directly to Supabase with seamless localStorage fallback.
  */
 
-const DEFAULT_MENU_ITEMS = [
+const DEFAULT_SUPABASE_URL = 'https://uxoinirmwjryghfprewe.supabase.co';
+const DEFAULT_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4b2luaXJtd2pyeWdoZnByZXdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE3MTA3NjIsImV4cCI6MjEwNzI4Njc2Mn0.4AW7UmPwrs3YEbz4JvNNDR4PglhIOxb-T8eScRNQJTs';
+
+const DESIHUT_DEFAULT_MENU = [
     {
-        id: '1',
-        title: 'Truffle Mushroom Risotto',
-        category: 'Main Course',
-        price: 18.99,
-        description: 'Creamy Arborio rice infused with wild forest mushrooms, black truffle oil, and shaved Parmesan.',
-        image_url: 'https://images.unsplash.com/photo-1633964913295-ceb43826e7c9?auto=format&fit=crop&w=800&q=80',
-        is_veg: true,
+        id: 'dh-1',
+        title: 'Desihut Special Mutton Handi',
+        category: 'Handi Specials',
+        price: 1850,
+        description: 'Tender baby mutton simmered in a traditional clay handi with rich tomatoes, yogurt, fresh ginger juliennes, and a velvety cream swirl.',
+        image_url: 'assets/special_handi.png',
+        is_veg: false,
         is_available: true,
-        badge: 'Chef Special'
+        badge: "Chef's Special"
     },
     {
-        id: '2',
-        title: 'Artisanal Burrata Salad',
-        category: 'Starters',
-        price: 14.50,
-        description: 'Fresh Italian burrata with heirloom tomatoes, basil pesto, balsamic reduction, and toasted sourdough.',
-        image_url: 'https://images.unsplash.com/photo-1592417817098-8f3d6eb19655?auto=format&fit=crop&w=800&q=80',
-        is_veg: true,
+        id: 'dh-2',
+        title: 'Desihut Chicken Makhni Handi',
+        category: 'Handi Specials',
+        price: 1450,
+        description: 'Boneless chicken cubes slow-cooked in pure butter and mild aromatic spices with a rich, silky gravy in an authentic earthenware pot.',
+        image_url: 'assets/special_handi.png',
+        is_veg: false,
         is_available: true,
         badge: 'Bestseller'
     },
     {
-        id: '3',
-        title: 'Pan-Seared Atlantic Salmon',
-        category: 'Main Course',
-        price: 24.00,
-        description: 'Crispy skin salmon served over saffron cauliflower puree, charred asparagus, and lemon butter sauce.',
-        image_url: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=800&q=80',
+        id: 'dh-3',
+        title: 'Charcoal Grilled Chicken Malai Boti',
+        category: 'BBQ & Grills',
+        price: 890,
+        description: 'Supreme boneless chicken cubes marinated in fresh heavy cream, green cardamom, and mild spices, charcoal-grilled to tender perfection. Served with mint chutney.',
+        image_url: 'assets/malai_boti_bbq.png',
+        is_veg: false,
+        is_available: true,
+        badge: 'Must Try'
+    },
+    {
+        id: 'dh-4',
+        title: 'Desihut Reshmi Kabab Platter',
+        category: 'BBQ & Grills',
+        price: 850,
+        description: 'Silky minced chicken skewers blended with fresh herbs and butter, barbecued over red-hot coals with fresh crisp onion rings and raita.',
+        image_url: 'assets/malai_boti_bbq.png',
         is_veg: false,
         is_available: true,
         badge: 'Popular'
     },
     {
-        id: '4',
-        title: 'Classic Margherita Pizza',
-        category: 'Main Course',
-        price: 15.00,
-        description: 'Wood-fired sourdough crust, San Marzano tomato sauce, fresh mozzarella di bufala, and basil leaves.',
-        image_url: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&w=800&q=80',
-        is_veg: true,
+        id: 'dh-5',
+        title: 'Royal Desihut Dastarkhwan Feast',
+        category: 'Dastarkhwan & Mandi',
+        price: 3950,
+        description: 'The ultimate royal family platter (Serves 4-5)! A generous spread of aromatic Mandi/Kabsa rice, whole spiced roasted chicken/mutton, sizzling Shinwari Karahi, fresh naan, raita, and dips.',
+        image_url: 'assets/royal_dastarkhwan_feast.png',
+        is_veg: false,
         is_available: true,
-        badge: 'Classic'
+        badge: 'Grand Feast'
     },
     {
-        id: '5',
-        title: 'Smoky Fiery Chicken Wings',
-        category: 'Starters',
-        price: 12.99,
-        description: 'Glazed in house-made habanero honey sauce served with crisp celery and blue cheese dip.',
-        image_url: 'https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=800&q=80',
+        id: 'dh-6',
+        title: 'Chicken Sajji with Fragrant Mandi Rice',
+        category: 'Dastarkhwan & Mandi',
+        price: 1650,
+        description: 'Full slow-roasted marinated Balochi Sajji chicken served over steaming golden basmati rice, paired with special Desihut tomato salsa and raita.',
+        image_url: 'assets/royal_dastarkhwan_feast.png',
+        is_veg: false,
+        is_available: true,
+        badge: 'Signature'
+    },
+    {
+        id: 'dh-7',
+        title: 'Shinwari Mutton Karahi (Clay Wok)',
+        category: 'Karahi Specials',
+        price: 2450,
+        description: 'Authentic Khyber Shinwari style fresh mutton wok cooked in pure animal fat, fresh vine tomatoes, green chillies, and coarse black pepper.',
+        image_url: 'assets/royal_dastarkhwan_feast.png',
+        is_veg: false,
+        is_available: true,
+        badge: 'Authentic'
+    },
+    {
+        id: 'dh-8',
+        title: 'Desihut Special Chicken Karahi',
+        category: 'Karahi Specials',
+        price: 1550,
+        description: 'Traditional Pakistani chicken karahi tossed on high flame with fragrant ginger, roasted cumin, coriander seeds, and fresh green chillies.',
+        image_url: 'assets/special_handi.png',
         is_veg: false,
         is_available: true,
         badge: 'Spicy'
     },
     {
-        id: '6',
-        title: 'Velvety Mango Tiramisu',
-        category: 'Desserts',
-        price: 8.99,
-        description: 'Layered espresso ladyfingers with mascarpone cream and fresh Alphonso mango pulp infusion.',
-        image_url: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=800&q=80',
+        id: 'dh-9',
+        title: 'Tandoori Roghani Naan (Sesame & Butter)',
+        category: 'Tandoor & Breads',
+        price: 90,
+        description: 'Puffy, soft clay-oven baked bread brushed with golden desi butter and sprinkled with toasted sesame seeds.',
+        image_url: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=800&q=80',
         is_veg: true,
         is_available: true,
-        badge: 'Sweet Delight'
+        badge: 'Tandoori'
     },
     {
-        id: '7',
-        title: 'Matcha Pistachio Gelato',
-        category: 'Desserts',
-        price: 7.50,
-        description: 'Artisanal slow-churned matcha green tea ice cream topped with crushed roasted pistachios.',
-        image_url: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80',
+        id: 'dh-10',
+        title: 'Garlic Butter Naan',
+        category: 'Tandoor & Breads',
+        price: 110,
+        description: 'Hot clay-oven flatbread infused with roasted garlic chunks, fresh coriander, and melted butter.',
+        image_url: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80',
         is_veg: true,
         is_available: true,
-        badge: 'New'
+        badge: 'Fresh'
     },
     {
-        id: '8',
-        title: 'Iced Passionfruit Mint Fizz',
-        category: 'Beverages',
-        price: 5.99,
-        description: 'Refreshing blend of sparkling water, fresh passionfruit pulp, lime juice, and smashed mint.',
+        id: 'dh-11',
+        title: 'Fresh Mint Margarita / Lemonade',
+        category: 'Drinks & Desserts',
+        price: 250,
+        description: 'Ice-blended fresh garden mint leaves, fresh lime juice, black salt, and sparkling soda.',
         image_url: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=800&q=80',
         is_veg: true,
         is_available: true,
         badge: 'Refreshing'
     },
     {
-        id: '9',
-        title: 'Craft Berry Cold Brew Coffee',
-        category: 'Beverages',
-        price: 6.50,
-        description: 'Single-origin Ethiopian cold brew coffee lightly sweetened with natural raspberry syrup.',
-        image_url: 'https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=800&q=80',
+        id: 'dh-12',
+        title: 'Desihut Shahi Matka Kheer / Kulfa',
+        category: 'Drinks & Desserts',
+        price: 280,
+        description: 'Chilled traditional saffron and cardamom infused rice pudding served in earthen matka, topped with crushed almonds and pistachios.',
+        image_url: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=800&q=80',
         is_veg: true,
         is_available: true,
-        badge: 'Energizing'
+        badge: 'Sweet Delight'
     }
 ];
 
 class DBService {
     constructor() {
         this.supabaseClient = null;
+        this.isSupabaseConnected = false;
         this.initSupabase();
         this.initLocalStorage();
     }
 
     getSupabaseConfig() {
         return {
-            url: localStorage.getItem('dipti_sb_url') || '',
-            key: localStorage.getItem('dipti_sb_key') || ''
+            url: localStorage.getItem('desihut_sb_url') || DEFAULT_SUPABASE_URL,
+            key: localStorage.getItem('desihut_sb_key') || DEFAULT_SUPABASE_KEY
         };
     }
 
     saveSupabaseConfig(url, key) {
-        localStorage.setItem('dipti_sb_url', url.trim());
-        localStorage.setItem('dipti_sb_key', key.trim());
+        localStorage.setItem('desihut_sb_url', (url || '').trim());
+        localStorage.setItem('desihut_sb_key', (key || '').trim());
         this.initSupabase();
     }
 
@@ -131,7 +168,7 @@ class DBService {
         if (url && key && window.supabase) {
             try {
                 this.supabaseClient = window.supabase.createClient(url, key);
-                console.log('Connected to Supabase DB');
+                console.log('Desihut DB: Initialized Supabase client for', url);
             } catch (err) {
                 console.error('Supabase initialization failed:', err);
                 this.supabaseClient = null;
@@ -142,11 +179,11 @@ class DBService {
     }
 
     initLocalStorage() {
-        if (!localStorage.getItem('dipti_menu_items')) {
-            localStorage.setItem('dipti_menu_items', JSON.stringify(DEFAULT_MENU_ITEMS));
+        if (!localStorage.getItem('desihut_menu_items')) {
+            localStorage.setItem('desihut_menu_items', JSON.stringify(DESIHUT_DEFAULT_MENU));
         }
-        if (!localStorage.getItem('dipti_orders')) {
-            localStorage.setItem('dipti_orders', JSON.stringify([]));
+        if (!localStorage.getItem('desihut_orders')) {
+            localStorage.setItem('desihut_orders', JSON.stringify([]));
         }
     }
 
@@ -161,13 +198,14 @@ class DBService {
                     .order('created_at', { ascending: false });
 
                 if (!error && data && data.length > 0) {
+                    this.isSupabaseConnected = true;
                     return data;
                 }
             } catch (err) {
-                console.warn('Supabase fetch failed, falling back to local DB:', err);
+                console.warn('Supabase menu fetch fell back to local cache:', err);
             }
         }
-        return JSON.parse(localStorage.getItem('dipti_menu_items') || '[]');
+        return JSON.parse(localStorage.getItem('desihut_menu_items') || '[]');
     }
 
     async addMenuItem(item) {
@@ -176,7 +214,7 @@ class DBService {
             category: item.category,
             price: parseFloat(item.price),
             description: item.description || '',
-            image_url: item.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
+            image_url: item.image_url || 'assets/special_handi.png',
             is_veg: Boolean(item.is_veg),
             is_available: item.is_available !== undefined ? Boolean(item.is_available) : true,
             badge: item.badge || ''
@@ -189,18 +227,22 @@ class DBService {
                     .insert([newItem])
                     .select();
 
-                if (!error && data) {
+                if (!error && data && data.length > 0) {
+                    this.isSupabaseConnected = true;
+                    const items = JSON.parse(localStorage.getItem('desihut_menu_items') || '[]');
+                    items.unshift(data[0]);
+                    localStorage.setItem('desihut_menu_items', JSON.stringify(items));
                     return data[0];
                 }
             } catch (err) {
-                console.warn('Supabase insert failed, using local DB:', err);
+                console.warn('Supabase insert failed, storing locally:', err);
             }
         }
 
-        newItem.id = Date.now().toString();
-        const items = JSON.parse(localStorage.getItem('dipti_menu_items') || '[]');
+        newItem.id = 'dh-' + Date.now();
+        const items = JSON.parse(localStorage.getItem('desihut_menu_items') || '[]');
         items.unshift(newItem);
-        localStorage.setItem('dipti_menu_items', JSON.stringify(items));
+        localStorage.setItem('desihut_menu_items', JSON.stringify(items));
         return newItem;
     }
 
@@ -213,19 +255,19 @@ class DBService {
                     .eq('id', id)
                     .select();
 
-                if (!error && data) {
-                    return data[0];
+                if (!error && data && data.length > 0) {
+                    this.isSupabaseConnected = true;
                 }
             } catch (err) {
-                console.warn('Supabase update failed, using local DB:', err);
+                console.warn('Supabase update failed, updating local copy:', err);
             }
         }
 
-        const items = JSON.parse(localStorage.getItem('dipti_menu_items') || '[]');
+        const items = JSON.parse(localStorage.getItem('desihut_menu_items') || '[]');
         const idx = items.findIndex(i => String(i.id) === String(id));
         if (idx !== -1) {
             items[idx] = { ...items[idx], ...updatedFields };
-            localStorage.setItem('dipti_menu_items', JSON.stringify(items));
+            localStorage.setItem('desihut_menu_items', JSON.stringify(items));
             return items[idx];
         }
         return null;
@@ -239,15 +281,15 @@ class DBService {
                     .delete()
                     .eq('id', id);
 
-                if (!error) return true;
+                if (!error) this.isSupabaseConnected = true;
             } catch (err) {
-                console.warn('Supabase delete failed, using local DB:', err);
+                console.warn('Supabase delete failed, deleting locally:', err);
             }
         }
 
-        let items = JSON.parse(localStorage.getItem('dipti_menu_items') || '[]');
+        let items = JSON.parse(localStorage.getItem('desihut_menu_items') || '[]');
         items = items.filter(i => String(i.id) !== String(id));
-        localStorage.setItem('dipti_menu_items', JSON.stringify(items));
+        localStorage.setItem('desihut_menu_items', JSON.stringify(items));
         return true;
     }
 
@@ -262,20 +304,24 @@ class DBService {
                     .order('created_at', { ascending: false });
 
                 if (!error && data) {
+                    this.isSupabaseConnected = true;
                     return data;
                 }
             } catch (err) {
-                console.warn('Supabase order fetch failed, using local DB:', err);
+                console.warn('Supabase orders fetch fell back to local cache:', err);
             }
         }
-        return JSON.parse(localStorage.getItem('dipti_orders') || '[]');
+        return JSON.parse(localStorage.getItem('desihut_orders') || '[]');
     }
 
     async createOrder(orderData) {
+        const orderId = 'DH-' + Math.floor(100000 + Math.random() * 900000);
         const newOrder = {
+            id: orderId,
             customer_name: orderData.customer_name,
             phone: orderData.phone,
             address: orderData.address,
+            special_instructions: orderData.special_instructions || '',
             items: orderData.items,
             total_amount: parseFloat(orderData.total_amount),
             status: 'Pending',
@@ -284,23 +330,36 @@ class DBService {
 
         if (this.supabaseClient) {
             try {
+                const dbPayload = {
+                    customer_name: newOrder.customer_name,
+                    phone: newOrder.phone,
+                    address: newOrder.address,
+                    items: newOrder.items,
+                    total_amount: newOrder.total_amount,
+                    status: newOrder.status
+                };
+
                 const { data, error } = await this.supabaseClient
                     .from('orders')
-                    .insert([newOrder])
+                    .insert([dbPayload])
                     .select();
 
-                if (!error && data) {
-                    return data[0];
+                if (!error && data && data.length > 0) {
+                    this.isSupabaseConnected = true;
+                    const savedOrder = data[0];
+                    const orders = JSON.parse(localStorage.getItem('desihut_orders') || '[]');
+                    orders.unshift(savedOrder);
+                    localStorage.setItem('desihut_orders', JSON.stringify(orders));
+                    return savedOrder;
                 }
             } catch (err) {
-                console.warn('Supabase order insert failed, using local DB:', err);
+                console.warn('Supabase order insert failed, saving to local store:', err);
             }
         }
 
-        newOrder.id = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
-        const orders = JSON.parse(localStorage.getItem('dipti_orders') || '[]');
+        const orders = JSON.parse(localStorage.getItem('desihut_orders') || '[]');
         orders.unshift(newOrder);
-        localStorage.setItem('dipti_orders', JSON.stringify(orders));
+        localStorage.setItem('desihut_orders', JSON.stringify(orders));
         return newOrder;
     }
 
@@ -313,22 +372,38 @@ class DBService {
                     .eq('id', orderId)
                     .select();
 
-                if (!error && data) {
-                    return data[0];
+                if (!error && data && data.length > 0) {
+                    this.isSupabaseConnected = true;
                 }
             } catch (err) {
-                console.warn('Supabase update order status failed:', err);
+                console.warn('Supabase update order status error:', err);
             }
         }
 
-        const orders = JSON.parse(localStorage.getItem('dipti_orders') || '[]');
+        const orders = JSON.parse(localStorage.getItem('desihut_orders') || '[]');
         const idx = orders.findIndex(o => String(o.id) === String(orderId));
         if (idx !== -1) {
             orders[idx].status = status;
-            localStorage.setItem('dipti_orders', JSON.stringify(orders));
+            localStorage.setItem('desihut_orders', JSON.stringify(orders));
             return orders[idx];
         }
         return null;
+    }
+
+    async checkSupabaseHealth() {
+        if (!this.supabaseClient) return { ok: false, message: 'Supabase client not initialized' };
+        try {
+            const { data, error } = await this.supabaseClient
+                .from('menu_items')
+                .select('count', { count: 'exact', head: true });
+            
+            if (error) {
+                return { ok: false, error: error.message };
+            }
+            return { ok: true, message: 'Connected to Supabase menu_items table!' };
+        } catch (e) {
+            return { ok: false, error: e.message };
+        }
     }
 }
 
